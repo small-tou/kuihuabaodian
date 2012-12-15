@@ -1,0 +1,17 @@
+{
+  "name"                 : "kuihuabaodian",
+  "version"              : "0.0.1",
+  "private"              : true,
+  "scripts"              : {
+    "start"              : "node main"
+  },
+  "dependencies"         : {
+    "express"            : "3.0.3",
+    "consolidate"        : "*",
+    "xml"                : "*",
+    "node-xml-lite"      : "*",
+    "mongoose"           : "*",
+    "request"            : "*",
+    "iced-coffee-script" : "*"
+  }
+}

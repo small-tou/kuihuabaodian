@@ -1,12 +1,27 @@
-var express = require('express');
-var cons = require('consolidate');
-var Client = require('mysql').Client;
-var xml = require("node-xml-lite");
-var XML = require('xml');
-var Taobao = require("./taobao.js");
-var formatjson = require('formatjson');
-var sql_username="root"
-var sql_pwd="123" 
+ var express = require('express');
+ var cons = require('consolidate');
+ var xml = require("node-xml-lite");
+ var XML = require('xml');
+ require('iced-coffee-script');
+ var models =require('./models');
+ var sql_username="root";
+ var sql_pwd="123";
+
+
+
+if(process.argv[2]){
+  models.connectDb(function(err){
+    console.error(err);
+    models.verse.getReply(process.argv[2].split(','),function(err,items){
+      console.error(err);
+      console.log(items);
+      process.exit(0);
+    });
+  });
+  
+}
+
+
 //init express app
 var app = express();
 app.use(express.logger({
@@ -94,18 +109,18 @@ app.post("/api",function(req,res){
   req.on("end",function () {
     switch (chunks.length) {
       case 0:
-        data = new Buffer(0);
-        break;
+      data = new Buffer(0);
+      break;
       case 1:
-        data = chunks[0];
-        break;
+      data = chunks[0];
+      break;
       default:
-        data = new Buffer(size);
-        for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {
-          chunks[i].copy(data, pos);
-          pos += chunks[i].length;
-        }
-        break;
+      data = new Buffer(size);
+      for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {
+        chunks[i].copy(data, pos);
+        pos += chunks[i].length;
+      }
+      break;
     }
     data=data.toString();
     var xmlData=xml.parseString(data)
@@ -124,12 +139,23 @@ app.post("/api",function(req,res){
     })
     console.log(msg)
     var source_text=msg.Content;
-    result=reply(msg,"我知道你说了什么："+source_text)
-    res.end(result)
+    models.getReply(source_text,function(err,items){
+      if(items.length){
+        var str='';
+        for(i in items){
+          str+=items[i].content+',';
+        }
+        result=reply(msg,str);
+        res.end(result)
+      }else
+      {
+        result=reply(msg,'少年，诗词中没有这么猥琐的词~');
+        res.end(result)
+      }
+    });
   })
 })
 app.listen(8333);
 process.on('uncaughtException', function (error) {
   console.log(error)
 });
-         
