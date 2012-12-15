@@ -35,10 +35,7 @@ vs.statics.getReply=(words,cb)->
   query=@where('content')
   for word in words
     query=query.regex(new RegExp(word));
-  await query.sort({'count':-1}).exec defer err,items
-  for item in items
-    item.count++
-    await item.save defer err
+  await query.exec defer err,items
   if items.length==0
     return cb err,taunts[Math.floor(Math.random()*taunts.length)]
   item=items[Math.floor(Math.random()*items.length)]
