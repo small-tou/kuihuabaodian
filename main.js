@@ -2,26 +2,25 @@
  var cons = require('consolidate');
  var xml = require("node-xml-lite");
  var XML = require('xml');
- var mongoose =require('mongoose');
- var sql_username="root"
- var sql_pwd="123" 
-mongoose.connect('mongodb://localhost/kuihuabaodian-db',function(err){});
-var verse=mongoose.model('verse',new mongoose.Schema({
-  content:{
-    type:String,
-    index:true
-  },
-  order:{
-    type:mongoose.Schema.Types.Integer,
-    index:true,
-    unique:true
-  }
-}));
+ require('iced-coffee-script');
+ var models =require('./models');
+ var sql_username="root";
+ var sql_pwd="123";
+
+
 
 if(process.argv[2]){
+  models.connectDb(function(err){
+    console.error(err);
+    models.verse.getReply(process.argv[2].split(','),function(err,items){
+      console.error(err);
+      console.log(items);
+      process.exit(0);
+    });
+  });
   
-  process.exit(0);
 }
+
 
 //init express app
 var app = express();
@@ -140,8 +139,20 @@ app.post("/api",function(req,res){
     })
     console.log(msg)
     var source_text=msg.Content;
-    result=reply(msg,"我知道你说了什么："+source_text)
-    res.end(result)
+    models.getReply(source_text,function(err,items){
+      if(items.length){
+        var str='';
+        for(i in items){
+          str+=items[i].content+',';
+        }
+        result=reply(msg,str);
+        res.end(result)
+      }else
+      {
+        result=reply(msg,'少年，诗词中没有这么猥琐的词~');
+        res.end(result)
+      }
+    });
   })
 })
 app.listen(8333);
