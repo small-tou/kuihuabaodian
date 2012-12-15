@@ -139,7 +139,7 @@ app.post("/api",function(req,res){
     })
     console.log(msg)
     var source_text=msg.Content;
-    models.verse.getReply(source_text,function(err,items){
+    models.verse.getReply(source_text.split(','),function(err,items){
       if(items.length){
         var str='';
         for(i in items){
