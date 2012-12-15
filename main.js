@@ -1,9 +1,28 @@
  var express = require('express');
-var cons = require('consolidate');
-var xml = require("node-xml-lite");
-var XML = require('xml');
-var sql_username="root"
-var sql_pwd="123" 
+ var cons = require('consolidate');
+ var xml = require("node-xml-lite");
+ var XML = require('xml');
+ var mongoose =require('mongoose');
+ var sql_username="root"
+ var sql_pwd="123" 
+mongoose.connect('mongodb://localhost/kuihuabaodian-db',function(err){});
+var verse=mongoose.model('verse',new mongoose.Schema({
+  content:{
+    type:String,
+    index:true
+  },
+  order:{
+    type:mongoose.Schema.Types.Integer,
+    index:true,
+    unique:true
+  }
+}));
+
+if(process.argv[2]){
+  
+  process.exit(0);
+}
+
 //init express app
 var app = express();
 app.use(express.logger({
@@ -91,18 +110,18 @@ app.post("/api",function(req,res){
   req.on("end",function () {
     switch (chunks.length) {
       case 0:
-        data = new Buffer(0);
-        break;
+      data = new Buffer(0);
+      break;
       case 1:
-        data = chunks[0];
-        break;
+      data = chunks[0];
+      break;
       default:
-        data = new Buffer(size);
-        for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {
-          chunks[i].copy(data, pos);
-          pos += chunks[i].length;
-        }
-        break;
+      data = new Buffer(size);
+      for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {
+        chunks[i].copy(data, pos);
+        pos += chunks[i].length;
+      }
+      break;
     }
     data=data.toString();
     var xmlData=xml.parseString(data)
@@ -129,4 +148,3 @@ app.listen(8333);
 process.on('uncaughtException', function (error) {
   console.log(error)
 });
-         
