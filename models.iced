@@ -14,6 +14,7 @@ vs = new mongoose.Schema
   count:
     type: Number
     default: 0
+guide='一个字的词找到诗句的概率更高'
 taunts=[
   '少年，诗词中没有这么猥琐的词~'
   '不要急不要急，心急吃不了热豆腐'
@@ -23,6 +24,12 @@ taunts=[
   '把大象放进冰箱要几步？',
   '找不到诗句怎么办？先祝您剩蛋节快乐吧~~~',
   '想不到合适的词？看看天气吧，雨，飘雪，秋风，落叶，归草。也许，这就是人生吧。'
+  guide
+  guide
+  guide
+  guide
+  guide
+  guide
 ]
 vs.statics.getReply=(words,cb)->
   query=@where('content')
