@@ -139,19 +139,9 @@ app.post("/api",function(req,res){
     })
     console.log(msg)
     var source_text=msg.Content;
-    models.verse.getReply(source_text.split(','),function(err,items){
-      if(items.length){
-        var str='';
-        for(i in items){
-          str+=items[i].content+',';
-        }
+    models.verse.getReply(source_text.split(','),function(err,str){
         result=reply(msg,str);
         res.end(result)
-      }else
-      {
-        result=reply(msg,'少年，诗词中没有这么猥琐的词~');
-        res.end(result)
-      }
     });
   })
 })
