@@ -1,0 +1,70 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>淘客转换</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="http://a.tbcdn.cn/s/kissy/1.2.0/kissy-min.js?t=111229.js"></script>
+        <style>
+            div{
+                height:50px;
+                line-height:50px;
+                margin:10px;
+                padding:10px;
+                background:#f1f1f1;
+                border:1px solid #ddd;
+                color:#666;
+                font-size:12px;
+            }
+            input{
+                width:300px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>商品完整URL：<input type="text" id="source"> <button id="doo">转换</button></div>
+
+        <div>淘客链接：<span id="result">结果显示在这里</span></div>
+        <script>
+        (function(){
+            var S=KISSY,DOM=S.DOM,Event=S.Event;
+            Event.on("#doo","click",function(){
+                if(DOM.val("#source")){
+                    
+                    S.IO({
+                        url:"/convert",
+                        type:"post",
+                        dataType:"json",
+                        data:{
+                            source:DOM.val("#source")
+                        },
+                        success:function(data){
+                            setTimeout(function(){
+                                if(data.failed){
+                                    alert("转换失败，检查url是否是淘宝或者天猫的url")
+                                    return false;
+                                }
+                                if(data["taobaoke_items_detail_get_response"]['total_results']){
+                                    var item=data["taobaoke_items_detail_get_response"]['taobaoke_item_details']['taobaoke_item_detail'][0]
+                                    DOM.html("#result","<a href="+item.click_url+" target=_blank>"+item.item.title+"</a>")
+                                }else{
+                                   DOM.html("#result","此商品没有参加淘客")
+                                }
+                            },0)
+                        },
+                        error:function(){
+                    
+                        }
+                    })
+                }else{
+                    alert("请填写标题")
+                }
+            }) 
+        })();
+    </script>
+    </body>
+    
+</html>
