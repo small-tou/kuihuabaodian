@@ -14,6 +14,14 @@ vs = new mongoose.Schema
   count:
     type: Number
     default: 0
+taunts=[
+  '少年，诗词中没有这么猥琐的词~'
+  '不要急不要急，心急吃不了热豆腐'
+  '( ⊙ o ⊙ )！'
+  'O(∩_∩)O~呵呵'
+  '世界上的一切问题，都能用“关你屁事”和“关我屁事” 来回答。突然感觉屁好忙。'
+  '把大象放进冰箱要几步？'
+]
 vs.statics.getReply=(words,cb)->
   query=@where('content')
   for word in words
@@ -23,9 +31,13 @@ vs.statics.getReply=(words,cb)->
     item.count++
     await item.save defer err
   if items.length==0
-    return cb err,items
+    return cb err,taunts[Math.floor(Math.random()*taunts.length)]
   await @find({order:{$gte:items[0].order-2,$lte:items[0].order+2}}).sort({'order':1}).exec defer err,items
-  cb(err,items)
+  str=''
+  for item in items
+    str+=item.content
+    str+=','
+  cb(err,str)
 
 verse= mongoose.model "verse", vs
 module.exports.verse =verse
