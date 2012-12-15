@@ -43,11 +43,47 @@ app.get("/",function(req,res){
 //首页代码
 app.get('/api', function(req, res){
   var checkstr=req.query.echostr;
+  console.log(checkstr)
   if(checkstr){
     res.end(checkstr);
   }else{
+    res.end("error")
   }
 });
+//发来的msg，回复的text
+var reply=function(msg,text){
+  var config=[
+  {
+    ToUserName: {
+      _cdata:msg.FromUserName
+    }
+  },
+  {
+    FromUserName: {
+      _cdata:msg.ToUserName
+    }
+  },
+  {
+    CreateTime: msg.CreateTime
+  },
+  {
+    MsgType: {
+      _cdata:'text'
+    }
+  },
+  {
+    Content: {
+      _cdata:text||"我不懂您说什么，伤神啊~~~"
+    }
+  },
+  {
+    FuncFlag:0
+  }];
+  result=XML([{
+    "xml":config
+  }])
+  return result;
+}
 app.post("/api",function(req,res){
   var chunks=[];
   var size=0;
@@ -82,35 +118,15 @@ app.post("/api",function(req,res){
       Content: '',
       FuncFlag:0
     }
+    
     options.forEach(function(d){
       msg[d.name]=d.childs[0]
     })
-    var config={
-      ToUserName: {
-        _cdata:msg.FromUserName
-      },
-      FromUserName: {
-        _cdata:msg.ToUserName
-      },
-      CreateTime: msg.CreateTime,
-      MsgType: {
-        _cdata:'news'
-      },
-      Content: {
-        _cdata:"hehe"
-      },
-      FuncFlag:0,
-      ArticleCount:0,
-      Articles:[
-                
-    ]
-    }
-    result=XML([{
-      "xml":result
-    }])
+    console.log(msg)
+    var source_text=msg.Content;
+    result=reply(msg,"我知道你说了什么："+source_text)
     res.end(result)
   })
-    
 })
 app.listen(8333);
 process.on('uncaughtException', function (error) {
