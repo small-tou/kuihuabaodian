@@ -1,6 +1,5 @@
-var express = require('express');
+ var express = require('express');
 var cons = require('consolidate');
-var Client = require('mysql').Client;
 var xml = require("node-xml-lite");
 var XML = require('xml');
 var sql_username="root"
