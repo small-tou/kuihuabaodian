@@ -3,8 +3,6 @@ var cons = require('consolidate');
 var Client = require('mysql').Client;
 var xml = require("node-xml-lite");
 var XML = require('xml');
-var Taobao = require("./taobao.js");
-var formatjson = require('formatjson');
 var sql_username="root"
 var sql_pwd="123" 
 //init express app
